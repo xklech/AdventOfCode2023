@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "target": "ES2019",
+    "types": ["node"],
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "lib":["ES2021.String"]
+  }
+}
