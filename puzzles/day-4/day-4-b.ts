@@ -60,12 +60,12 @@ export async function day4b(dataPath?: string) {
     ).length;
     for (let i = 1; i <= countOfWinningNumbers; i++) {
       let updateIndex = ticket.ticketNumber + i;
-      let numberOfTicketsOwned = resultMap.has(ticket.ticketNumber)
+      let numberOfTicketsOwned = (resultMap.has(ticket.ticketNumber)
         ? resultMap.get(ticket.ticketNumber)
-        : 1;
-      let currentCardsCount = resultMap.has(updateIndex)
+        : 1) as number;
+      let currentCardsCount = (resultMap.has(updateIndex)
         ? resultMap.get(updateIndex)
-        : 1;
+        : 1) as number;
       resultMap.set(updateIndex, currentCardsCount + 1 * numberOfTicketsOwned);
     }
   }
@@ -97,7 +97,8 @@ class Ticket {
 
   constructor(card: string) {
     let splittedTicket = card.split('|');
-    this.ticketNumber = +card.match(this.REGEX_INDEX)[0];
+    var match = card.match(this.REGEX_INDEX);
+    this.ticketNumber = match != null ? +match[0] : 0;
     this.winningNumbers = this.extractNumbers(splittedTicket[0]);
     this.myNumbers = this.extractNumbers(splittedTicket[1]);
   }

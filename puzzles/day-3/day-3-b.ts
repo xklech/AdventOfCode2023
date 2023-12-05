@@ -45,7 +45,7 @@ export async function day3b(dataPath?: string) {
   let result = 0;
   for (let rowIndex = 0; rowIndex < data.length; rowIndex++) {
     const line = data[rowIndex];
-    let match: RegExpExecArray;
+    let match: RegExpExecArray|null;
     while ((match = REGEX.exec(line)) != null) {
       if (TRACE) console.log('===================');
       let partLines = new PartLines(data, rowIndex);
@@ -100,7 +100,7 @@ function getCurrentLineAdjacentNumbers(
   return result;
 }
 
-function getLineAdjacentNumbers(line: string, starIndex: number): number[] {
+function getLineAdjacentNumbers(line: string|null, starIndex: number): number[] {
   if (line == null) {
     return [];
   }
@@ -148,9 +148,9 @@ function isNumeric(str: string): boolean {
 }
 
 class PartLines {
-  current: string = null;
-  previous: string = null;
-  next: string = null;
+  current: string;
+  previous: string|null;
+  next: string|null;
 
   constructor(data: readonly string[], rowIndex: number) {
     this.current = data[rowIndex];

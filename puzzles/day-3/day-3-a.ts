@@ -45,7 +45,7 @@ export async function day3a(dataPath?: string) {
   let result = 0;
   for (let rowIndex = 0; rowIndex < data.length; rowIndex++) {
     const line = data[rowIndex];
-    let match: RegExpExecArray;
+    let match: RegExpExecArray|null;
     while ((match = REGEX.exec(line)) != null) {
       let partLines = new PartLines();
       partLines.current = line;
@@ -79,22 +79,23 @@ function isValidPart(
 }
 
 function isCurrentLineValidPart(
-  currentLine: string,
+  currentLine: string|null,
   partNumber: string,
   startIndex: number
 ): boolean {
   let prevIndex = startIndex - 1;
   let oneAfterIndex = startIndex + partNumber.length;
-  if (TRACE) console.log(`Length: ${currentLine.length}, Line: ${currentLine}`);
+  if (TRACE) console.log(`Length: ${currentLine?.length}, Line: ${currentLine}`);
   if (TRACE)
     console.log(
       `Check current line: prevIndex: ${prevIndex}, oneAfterIndex: ${oneAfterIndex}}`
     );
-  if (prevIndex >= 0 && currentLine.charAt(prevIndex) != '.') {
+  if (prevIndex >= 0 && currentLine?.charAt(prevIndex) != '.') {
     if (TRACE) console.log(`Valid current line part - prev`);
     return true;
   }
   if (
+    currentLine != null &&
     oneAfterIndex < currentLine.length &&
     currentLine.charAt(oneAfterIndex) != '.'
   ) {
@@ -106,7 +107,7 @@ function isCurrentLineValidPart(
 }
 
 function isLineValidPart(
-  line: string,
+  line: string|null,
   partNumber: string,
   startIndex: number
 ): boolean {
@@ -133,9 +134,9 @@ function isLineValidPart(
 }
 
 class PartLines {
-  current: string = null;
-  previous: string = null;
-  next: string = null;
+  current: string|null = null;
+  previous: string|null = null;
+  next: string|null = null;
 
   public toString(): string {
     return `Current: ${this.current}\n Previous: ${this.previous}\n Next: ${this.next}`;
