@@ -24,27 +24,23 @@ With the new joker rule, the total winnings in this example are 5905.
 
 Using the new joker rule, find the rank of every hand in your set. What are the new total winnings?
 
+Your puzzle answer was 250577259.
+
  * 
  */
 
 import { readData } from '../../shared.ts';
 import chalk from 'chalk';
 
-const TRACE = true;
+const TRACE = false;
 
-const CARDS = ['A', 'K', 'Q','T','9','8','7','6','5','4','3','2','J'];
+const CARDS = ['A', 'K', 'Q', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'J'];
 
 export async function day7b(dataPath?: string) {
   const data = await readData(dataPath);
   let hands = data.map<Hand>((line) => new Hand(line, true));
 
-  //hands find the best hand with joker start
-
-
-  //end
-
   hands = hands.sort(compareHands).reverse();
-
   log(hands.toString());
 
   let res = 0;
@@ -56,15 +52,16 @@ export async function day7b(dataPath?: string) {
 }
 
 enum Hands {
-    Unknown,
-    FiveOfAKind,
-    FourOfAKind,
-    FullHouse,
-    ThreeOfAKind,
-    TwoPair,
-    OnePair,
-    HighCard
+  Unknown,
+  FiveOfAKind,
+  FourOfAKind,
+  FullHouse,
+  ThreeOfAKind,
+  TwoPair,
+  OnePair,
+  HighCard,
 }
+
 class Hand {
   cards: string;
   bestCards: string;
@@ -75,42 +72,47 @@ class Hand {
     let split = line.split(' ');
     this.cards = split[0];
     this.bid = +split[1];
-    this.bestCards = expand ? this.bestJacksVariations(this.cards, this.bid).cards : this.cards;
+    this.bestCards = expand
+      ? this.bestJacksVariations(this.cards, this.bid).cards
+      : this.cards;
     this.hand = this.eval();
   }
 
-  private bestJacksVariations(cards:string, bid: number): Hand{
+  private bestJacksVariations(cards: string, bid: number): Hand {
     let index = cards.indexOf('J');
-    if(index === -1) {
-      return new Hand(`${cards} ${bid}`)
+    if (index === -1) {
+      return new Hand(`${cards} ${bid}`);
     }
-    let result: Hand|null = null;
+    let result: Hand | null = null;
     while (index !== -1) {
       for (let i = 0; i < CARDS.length - 1; i++) {
-        let newCardsStr = cards.substring(0,index) + CARDS[i] + cards.substring(index+1);
+        let newCardsStr =
+          cards.substring(0, index) + CARDS[i] + cards.substring(index + 1);
         let bestJack = this.bestJacksVariations(newCardsStr, bid);
-        if (result == null) {
-          result = bestJack;
-        } else {
-          result = compareHands(result, bestJack) > 0 ? result : bestJack;
-        }
+        result =
+          result === null
+            ? bestJack
+            : compareHands(result, bestJack) < 0
+            ? result
+            : bestJack;
       }
       index = cards.indexOf('J', index + 1);
     }
+
     return result!;
   }
 
   private eval(): Hands {
     let map = new Map<string, number>();
 
-    [...this.bestCards].forEach(card => {
-      map.set(card, map.has(card) ? map.get(card)! + 1 : 1)
+    [...this.bestCards].forEach((card) => {
+      map.set(card, map.has(card) ? map.get(card)! + 1 : 1);
     });
 
-    switch(map.size) {
+    switch (map.size) {
       case 1:
         return Hands.FiveOfAKind;
-      case 2: 
+      case 2:
         if ([...map.values()][0] === 1 || [...map.values()][0] === 4) {
           return Hands.FourOfAKind;
         } else {
@@ -120,7 +122,7 @@ class Hand {
         for (const value of map.values()) {
           if (value === 3) {
             return Hands.ThreeOfAKind;
-          } else if(value === 2) {
+          } else if (value === 2) {
             return Hands.TwoPair;
           }
         }
@@ -134,19 +136,21 @@ class Hand {
   }
 
   public toString(): string {
-    return `Hand - Cards: ${this.cards}, Bid: ${this.bid}, Hand: ${Hands[this.hand]}\n`;
+    return `Hand - Cards: ${this.cards}, Best Cards: ${this.bestCards} Bid: ${
+      this.bid
+    }, Hand: ${Hands[this.hand]}\n`;
   }
 }
 
 function compareHands(a: Hand, b: Hand): number {
   if (a.hand === b.hand) {
-      for (let i = 0; i < a.cards.length; i++) {
-        let chA = a.cards[i];
-        let chB = b.cards[i];
-        if (chA !== chB) {
-          return CARDS.indexOf(chA) - CARDS.indexOf(chB);
-        }
+    for (let i = 0; i < a.cards.length; i++) {
+      let chA = a.cards[i];
+      let chB = b.cards[i];
+      if (chA !== chB) {
+        return CARDS.indexOf(chA) - CARDS.indexOf(chB);
       }
+    }
   }
   return a.hand - b.hand;
 }
