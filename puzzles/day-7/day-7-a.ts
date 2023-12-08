@@ -1,4 +1,3 @@
-
 /**
  * 
  * --- Day 7: Camel Cards ---
@@ -63,8 +62,6 @@ Your puzzle answer was 252295678.
 import { readData } from '../../shared.ts';
 import chalk from 'chalk';
 
-const REGEX_NUMBER = /\d+/g;
-
 const TRACE = true;
 
 export async function day7a(dataPath?: string) {
@@ -84,14 +81,14 @@ export async function day7a(dataPath?: string) {
 }
 
 enum Hands {
-    Unkwnown,
-    FiveOfAKind,
-    FourOfAKind,
-    FullHouse,
-    ThreeOfAKind,
-    TwoPair,
-    OnePair,
-    HighCard
+  Unkwnown,
+  FiveOfAKind,
+  FourOfAKind,
+  FullHouse,
+  ThreeOfAKind,
+  TwoPair,
+  OnePair,
+  HighCard,
 }
 class Hand {
   cards: string;
@@ -108,14 +105,14 @@ class Hand {
   public eval(): Hands {
     let map = new Map<string, number>();
 
-    [...this.cards].forEach(card => {
-      map.set(card, map.has(card) ? map.get(card)! + 1 : 1)
+    [...this.cards].forEach((card) => {
+      map.set(card, map.has(card) ? map.get(card)! + 1 : 1);
     });
 
-    switch(map.size) {
+    switch (map.size) {
       case 1:
         return Hands.FiveOfAKind;
-      case 2: 
+      case 2:
         if ([...map.values()][0] === 1 || [...map.values()][0] === 4) {
           return Hands.FourOfAKind;
         } else {
@@ -125,7 +122,7 @@ class Hand {
         for (const value of map.values()) {
           if (value === 3) {
             return Hands.ThreeOfAKind;
-          } else if(value === 2) {
+          } else if (value === 2) {
             return Hands.TwoPair;
           }
         }
@@ -139,20 +136,22 @@ class Hand {
   }
 
   public toString(): string {
-    return `Hand - Cards: ${this.cards}, Bid: ${this.bid}, Hand: ${Hands[this.hand]}\n`;
+    return `Hand - Cards: ${this.cards}, Bid: ${this.bid}, Hand: ${
+      Hands[this.hand]
+    }\n`;
   }
 }
 
-const CARDS = ['A', 'K', 'Q','J','T','9','8','7','6','5','4','3','2'];
+const CARDS = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
 function compareHands(a: Hand, b: Hand): number {
   if (a.hand === b.hand) {
-      for (let i = 0; i < a.cards.length; i++) {
-        let chA = a.cards[i];
-        let chB = b.cards[i];
-        if (chA !== chB) {
-          return CARDS.indexOf(chA) - CARDS.indexOf(chB);
-        }
+    for (let i = 0; i < a.cards.length; i++) {
+      let chA = a.cards[i];
+      let chB = b.cards[i];
+      if (chA !== chB) {
+        return CARDS.indexOf(chA) - CARDS.indexOf(chB);
       }
+    }
   }
   return a.hand - b.hand;
 }
